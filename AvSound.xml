@@ -1,0 +1,3131 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE muclient>
+<!-- Saved on Sunday, May 24, 2015, 8:13 AM -->
+<!-- MuClient version 4.94 -->
+
+
+
+<muclient>
+<plugin
+   name="AvSound"
+   author="Andrew Johnson"
+   id="ddc1bb6aa90a314dafe92ca9"
+   language="Lua"
+   purpose="Sounds and substitutions for Avalon; The Legend Lives"
+   date_written="2015-05-24 08:07:30"
+   requires="4.50"
+   version="0.32"
+   >
+<description trim="y">
+<![CDATA[
+This plugin provides substitutions and sounds for Avalon; the Legend Lives. It assumes you have the MushReader plugin, which can be found at http://www.allinaccess.com/mc - and that you have the sounds included in the zip file this plugin normally ships in.
+
+This is a work in progress and by no means complete or comrehensive. It should also be born in mind that this plugin revolves primarily around my own combat needs, though I am constantly tinkering to create the best experience possible. Feature requests, edits and the like can be contributed on the Meetplace forums, or directly to me at agarwain@meetplace.net .
+]]>
+</description>
+
+</plugin>
+
+
+<!--  Get our standard constants -->
+
+<include name="constants.lua"/>
+
+<!--  Script  -->
+
+
+<script>
+<![CDATA[
+function firstToUpper(str)
+    return (str:gsub("^%l", string.upper))
+end
+
+function inote(text)
+Execute("tts_stop")
+Note(text)
+end
+
+-- Placeholder --
+status = {}
+
+
+]]>
+</script>
+
+
+<!--  Plugin help  -->
+
+<aliases>
+  <alias
+   script="OnHelp"
+   match="AvSound:help"
+   enabled="y"
+  >
+  </alias>
+</aliases>
+
+<script>
+<![CDATA[
+function OnHelp ()
+  world.Note (world.GetPluginInfo (world.GetPluginID (), 3))
+end
+]]>
+</script> 
+
+<!--  Aliases  -->
+
+<aliases>
+  <alias
+   name="mal_off_alias"
+   match="maloff"
+   enabled="y"
+   group="malloran"
+   send_to="12"
+   sequence="100"
+  >
+  <send>EnableTriggerGroup("malloran", 0)
+Note( "Malloran sounds disabled." )</send>
+  </alias>
+  <alias
+   name="mal_on_alias"
+   match="malon"
+   enabled="y"
+   group="malloran"
+   send_to="12"
+   sequence="100"
+  >
+  <send>EnableTriggerGroup("malloran", 1)
+Note( "Malloran sounds enabled." )</send>
+  </alias>
+
+
+  <alias
+   match="en *"
+   enabled="y"
+   group="target"
+   send_to="12"
+   sequence="100"
+  >
+  <send>Send "enemy %1 100"
+Execute( "t %1" )</send>
+  </alias>
+  <alias
+   match="t *"
+   enabled="y"
+   group="target"
+   send_to="12"
+   sequence="100"
+  >
+  <send>target = firstToUpper("%1")
+Send( "tt " .. target)</send>
+  </alias>
+
+
+</aliases>
+
+
+
+<!--  Triggers  -->
+<triggers>
+  <trigger
+   enabled="y"
+   group="alchemy"
+   match="Lightning whacks into a pretty balloon you hold. The vapours within burst forth, tearing through the thin fabric, as if having captured the bolt."
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/balloon.ogg")
+Note( "Pop!" )</send>
+  </trigger>
+
+
+  <trigger
+   enabled="y"
+   group="balances"
+   ignore_case="y"
+   keep_evaluating="y"
+   match="^Hard-Equilibrium.$"
+   name="equilibrium"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="10"
+  >
+  <send>Sound(GetInfo(67).."/sounds/eq.wav")
+Note( "Eq")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="balances"
+   ignore_case="y"
+   keep_evaluating="y"
+   match="^(left|right) side ready.$"
+   name="balance"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/bal.wav")
+Note "%1"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="balances"
+   match="^You have regained your ([A-z]+)-sided balance.$"
+   name="long_balance_sub"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+   sound="c:\users\andrew\mushclient-portable\worlds\sounds\bal.wav"
+  >
+  <send>Note( "%1" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="balances"
+   match="^Your elemental equilibrium will return in (roughly|around) (.*).$"
+   name="eleq_time"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "Eleq in %2" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="balances"
+   keep_evaluating="y"
+   match="Elemental equilibrium is regained."
+   name="eleq_balance"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/eq2.wav")
+Note "Eleq"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="balances"
+   match="You are unbalanced and cannot concentrate enough."
+   name="off_bal"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Unbal"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="balances"
+   match="You are unbalanced and cannot move."
+   name="off_balance_moving"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Unbal"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="balances"
+   match="You could take a healing herb again."
+   name="on_balance_herb"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/herb.wav")
+Note "Herb"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="balances"
+   match="You could take another health or mana restorative."
+   name="on_potion_balance"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+   sound="c:\users\andrew\mushclient-portable\sounds\health.wav"
+  >
+  <send>Sound(GetInfo(67).."/sounds/health.wav")
+Note "Health"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="balances"
+   ignore_case="y"
+   keep_evaluating="y"
+   match="You have equilibrium."
+   name="soft_equilibrium"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/eq.wav")
+Note "Seq"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="balances"
+   match="You have no equilibrium."
+   name="no_equilibrium"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "No eq"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="balances"
+   match="You have not yet the equilibrium to perform the act."
+   name="off_equilibrium"
+   omit_from_log="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "No Eq"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="balances"
+   match="You would be able to take an allheale again."
+   name="allheale_bal"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/allheal_bal.wav")
+Note "Allheal"</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="candescence"
+   match="* directs a dazzling beam of light at you, and you are held immediately by the hypnotic rays and must struggle free."
+   name="dazzled"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/dazzled.wav")
+inote("dazzled by %1")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="candescence"
+   ignore_case="y"
+   keep_evaluating="y"
+   match="^You strip (.*) of cold resistance.$"
+   name="scathed_cold"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/coldDown.wav")
+Note( "Cold stripped" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="candescence"
+   match="As the blow slips harmlessly through the form of Agarwain, the phantasm disperses with a wink."
+   name="phantasm_sub"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/phantasm.ogg")
+Note( "Phantasm!" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="candescence"
+   keep_evaluating="y"
+   match="eyes lose their white glaze at the touch of your candescence.$"
+   name="dazzle_blind"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/dazzle_blind.ogg")
+Note( "Dazblind" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="candescence"
+   keep_evaluating="y"
+   match="is distracted but only for a fleeting moment by your dazzling.$"
+   name="dazzle_ignore"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/dazzle_ignore.ogg")
+Note( "Ig" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="candescence"
+   keep_evaluating="y"
+   match="You direct a dazzling beam of light at * who is held immediately by the hypnotic rays."
+   name="dazzle_hit"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/dazzle.ogg")
+Note( "Dazzle!" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="candescence"
+   match="You direct a dazzling beam of light at * whose disinterest is most surprising as the hypnotic rays fail you."
+   name="dazzle_insouciance"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Insouciant"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="candescence"
+   match="You part your palms in the direction of *, applying your candescent powers to draw away luminosity."
+   name="weave_void_sound"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/void.wav")
+Note( "Voided %1" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="candescence"
+   match="Your ignorance is broken by * dazzling candescent lights."
+   name="ignorance_down_azzle"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/unignore.wav")
+inote( "Ig down!" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="candescence"
+   match="Your sight is restored by * dazzling candescent lights."
+   name="dazzle_restored_sight"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/unblind.wav")
+inote( "Sight" )</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="channels"
+   keep_evaluating="y"
+   match="* has been slain by *."
+   send_to="14"
+   sequence="100"
+  >
+  <send>Execute("history_add deaths=%1 killed by %2")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="channels"
+   keep_evaluating="y"
+   match="^(.*) (says|asks|exclaims), (.*).$"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Execute("history_add says=%1: %3")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="channels"
+   keep_evaluating="y"
+   match="^([A-z]+) calls? to the ([A-z]+) Guild\: (.*)$"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Execute("history_add %2=%1: %3")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="channels"
+   ignore_case="y"
+   match="^([A-z]+) calls? to the Entwined Orders\: (.*)$"
+   name="entwined_order_calling"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Execute("history_add entwined=%1: %2")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="channels"
+   ignore_case="y"
+   keep_evaluating="y"
+   match="^([A-z]+) calls? to the Order of .*\: (.*)$"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Execute("history_add order=%1: %2")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="channels"
+   keep_evaluating="y"
+   match="^([A-z]+).*calls\: (.*)$"
+   name="team_calling"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/call.wav")
+Execute("history_add team=%1: %2")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="channels"
+   ignore_case="y"
+   keep_evaluating="y"
+   match="^([A-Za-z]+) calls? (his|her|to your|to his|to her) ([A-Za-z]+)\: (.*)$"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Execute("history_add %3=%1: %4")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="channels"
+   keep_evaluating="y"
+   match="^([A-Za-z]+) calls? to ([A-Za-z]+)\: (.*)$"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Execute("history_add %2=%1: %3")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="channels"
+   ignore_case="y"
+   match="^\[(Patron|Field Marshall|Deputy Marshall|General|Colonel|Major|Captain|Lieutenant|Cadet)\] ([A-z]+)\: (.+)$"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Execute("history_add military=%2: %3")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="channels"
+   match="^To the [A-z]+ military\: (.+)$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>Execute("history_add military=You: %1")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="channels"
+   keep_evaluating="y"
+   match="^You speak to your \&quot;[A-z]+\&quot; team. You call to [A-z]+ fellow team-members\: (.*)$"
+   name="me_to_team"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Execute("history_add team=Me: %1")</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="charming"
+   keep_evaluating="y"
+   match="* stands within a pentacle."
+   name="pented_sub"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/shielded.wav")
+Note( "%1 pent" )</send>
+  </trigger>
+
+
+  <trigger
+   enabled="y"
+   group="charming"
+   match="^(.+) strokes (his|her) charmed fingers against your weary head mumbling words of enchanted and wonderfully restful import."
+   name="mindbleed"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Mindbleed!"</send>
+  </trigger>
+
+
+  <trigger
+   enabled="y"
+   group="charming"
+   match="You cast an icy aura about *"
+   name="iced"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/ice.wav")
+Note "Iced %1"</send>
+  </trigger>
+
+
+  <trigger
+   enabled="y"
+   group="charming"
+   match="^(.*) breaks free from the ice encasing (him|her).$"
+   name="ice_free"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/iceFree.wav")
+Note "%1 free"</send>
+  </trigger>
+
+
+
+
+  <trigger
+   enabled="y"
+   group="cures"
+   match="^Your buckled, feeble (left|right) leg is strengthened suddenly.$"
+   name="cured_broken_leg"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "%1 leg"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="cures"
+   match="Optimism banishes the depression from your heart."
+   name="cured_pessimism"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "opt"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="cures"
+   match="The curse of disloyalty is gone."
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Dl cured"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="cures"
+   match="The megillos herb banishes despair from your mind."
+   name="cured_nann"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Nann cured"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="cures"
+   match="The ollso heals your contracted windpipe."
+   name="cured_windpipe"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "Cured windpipe" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="cures"
+   match="You take a heavy breath as your windpipe recovers."
+   name="windpipe_cured_time"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "Cured windpipe" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="cures"
+   match="You wake yourself up from a deep slumber."
+   name="awakened"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/awakened.ogg")
+Note( "Awake" )</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="defs"
+   match="A divine alkar springs up about your form."
+   name="alkar"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Alkar"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="defs"
+   match="A whirling globe of essence forms itself from the vapours of the herb of malloran."
+   name="malloran_sub"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Mal"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="defs"
+   match="The aura surrounding you flickers brightly and then fades into nothing."
+   name="lost_malloran"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "MalDown"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="defs"
+   match="The divine alkar which protected you disperses with a puff of smoke."
+   name="alkar_down"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Alkar down"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="defs"
+   match="The sounds about you become muffled and cease; you have gone deaf."
+   name="gone_deaf"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Deaf"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="defs"
+   match="The world about you falls into darkness; you have gone blind."
+   name="blind_def"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Blind"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="defs"
+   match="You cease to parry."
+   name="off_parry"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Parry off"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="defs"
+   match="You cross your arms in front of you to parry incoming blows."
+   name="fullparrying"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Parry"</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="demons"
+   match="A great billow of underworldly effluent surrounds * suddenly, consuming the demon instantly with a crackle of hellflames."
+   name="warding_banished_demon"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "Banished %1" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="demons"
+   match="The demonic pestilence gives you *"
+   name="pestilence"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "%1"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="demons"
+   match="The silver arrow strikes directly into the insipid heart of * and the undead creature is consumed in white fire with a horrific scream."
+   name="quarreled"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/quarreled.ogg")
+Note( "quarreled %1" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="demons"
+   match="You are tripped up by the demonic imp and stunned momentarily."
+   name="imp"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Imp"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="demons"
+   match="You are unbalanced on your steed by the demonic imp."
+   name="imp_on_steed"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Imp"</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="diagnosis"
+   match="You are afflicted by *"
+   name="diag_shorthand"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "%1"</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="elementalism"
+   match="A great explosion of earth power sends a dusty shaft of soil-and-rock slamming into you, shattering violently on impact!"
+   name="earthbolt_hit"
+   omit_from_log="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "Eb hit" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="elementalism"
+   match="You move at the centre of the flaming vortex."
+   name="fire_vortex"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Vortex"</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="evocation"
+   match="You are scattered by the acidic blood of *"
+   name="ichored"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Blood"</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="exits"
+   keep_evaluating="y"
+   match="\sYou notice a single exit, (.*)\.$"
+   name="format_single_exit"
+   omit_from_log="y"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>DOAfterNote(0.2, "%1" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="exits"
+   keep_evaluating="y"
+   match="You notice a single exit, (.*)\.$"
+   name="format_single_exit_no_space"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>DoAfterNote(0.2, "%1" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="exits"
+   keep_evaluating="y"
+   match="You notice exits (.*)\.$"
+   name="format_exits_new"
+   omit_from_log="y"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "%1" )</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="eye"
+   match="* is here, shrouded in a cloak of invisibility."
+   name="invisible_sub"
+   omit_from_log="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "%1" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="eye"
+   match="Slinking about nearby, you spot the figure of *."
+   name="blended_sub"
+   omit_from_log="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "%1" )</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="farsight"
+   match="The sweet smelling mist caresses your nostrils, relaxing your insomniac state."
+   name="soma"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Soma"</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="fatalism"
+   match="A feeling of fearlessness descends upon you."
+   name="quixotism"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Quix"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="fatalism"
+   match="You are struck by a sudden fear of heights."
+   name="fatalism_vertigo"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Vertigo"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="fatalism"
+   match="You feel a sense of potency and inner strength."
+   name="parasite"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Parasite"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="fatalism"
+   match="You feel lighter, suddenly - somehow less full-bodied."
+   name="shimmering"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Shimmer"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="fatalism"
+   match="You grow tired, suddenly, of all this new-fangled learning."
+   name="stupidity"
+   omit_from_output="y"
+   send_to="2"
+   sequence="100"
+  >
+  <send>Note "Stupid"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="fatalism"
+   match="You look down at your hands - they are starting to become translucent!"
+   name="shimmer"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Shimmer"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="fatalism"
+   match="Your mind darkens. What is the point of living, you ask yourself?"
+   name="pessimism"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Pess"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="fatalism"
+   match="Your movements become dull and sluggish."
+   name="sloth"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Sloth"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="fatalism"
+   match="Your mystic barrier has been shattered by the fatalist touch of *"
+   name="barrier_down"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Barrier down %1"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="fatalism"
+   match="Your stomach burns like fire; food and drink are an impossibility."
+   name="anorexia"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "Anex" )</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="fisticuffs"
+   match="barges over to you and pushes you sturdily to the (\w+).$"
+   name="pushed"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/pushed.ogg")
+inote( "Pushed %1" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="fisticuffs"
+   keep_evaluating="y"
+   match="gives you a short, sharp blow to your windpipe - you choke and splutter to try to regain your breath.$"
+   name="windpipe"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/windpipe.ogg")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="fisticuffs"
+   match="You are now blocking movement to the (.*)."
+   name="block_dir"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Block %1"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="fisticuffs"
+   match="You inhale a deep lungful of air."
+   name="inhale"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Breath"</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="gags"
+   match="(---) "
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="*, as your proxy*"
+   name="gag_proxy"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="*doughty watchman*"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="*reads from a great spellbook and a lumen of octarine glows overhead."
+   name="other_read_spellbook_gag"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   group="gags"
+   match="-*"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="--- "
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   lines_to_match="2"
+   match="^(.*) continues to work on (his|her) lorerobes of many-colours, weaving a (.*) into its rich, thick fabric.$"
+   omit_from_output="y"
+   regexp="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="^A light sprite dances a brilliant but ever-moving luminosity about the locale.(.*)"
+   name="werelight_sub"
+   omit_from_log="y"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "sprite.%1" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="A *-shaped rune emblazons against you."
+   name="rune_strike_gag"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="A gentle breeze gives your pipe a sudden red glow."
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="A glowing rune staff is the last thing to catch your attention."
+   name="runestave_leaving_gag"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="A glowing runic stave here is the first thing to catch your attention."
+   name="runestave_enter_gag"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="A magestaff sheds some light on the surroundings.*"
+   name="magestaff_gag"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "%2"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="Columns of smoke rise from your pipe."
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="Dark vaporous emanations spread regions of freezing cold about the locale."
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="flexes (his|her) muscles and inhales deeply.$"
+   name="flex_gag"
+   omit_from_output="y"
+   regexp="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="Movement is returned by dint of ritual power."
+   name="ritual_movement_gag"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="On you ride."
+   name="riding_gag"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="On you ride. *"
+   name="omit_riding_message"
+   omit_from_output="y"
+   send_to="2"
+   sequence="100"
+  >
+  <send>%1</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="Power fills your voice again."
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="The brief flash of countless tiny proto-elemental motes of iridescence spark and scintillate about the locale."
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="The embers of your pipe give off a pleasing aroma."
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="The mists of peace lift themselves from this location."
+   name="gag_peace"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="The soft emerald-green light of the globestave emanation sparkles from myriad points about the location, each node its own source of enrichment and fertility."
+   name="gag_fertility"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="The statuesque sentinel blinks."
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="The taste of your pipe is most pleasant."
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="You are able to breathe despite the watery surroundings."
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="You are flying above the surface of the water."
+   name="flying_over_water"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="You are fording water with your steed."
+   name="ford_gag"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="You are unable to avoid seeing a cloud-shaped rune. You feel your eyelids gain in weight."
+   name="cloud_gag"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   ignore_case="y"
+   match="You close your eyes briefly to recover equilibrium."
+   name="equilibrium_gag"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="You feel most distinguished, your pipe at your lips."
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="You reach into a whirling earth elemental infused by elemental roots to derive your power."
+   name="earthbolt_roots_gag"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="You read from a great spellbook and a lumen of octarine glows overhead."
+   name="read_spellbook_gag"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   ignore_case="y"
+   match="You ride a great winged dragon *"
+   name="riding_dragon_gag"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="You see a *-shaped rune out of the corner of your eye."
+   name="seen_rune_gag"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   keep_evaluating="y"
+   match="Your echo ritual conjures the playing of *"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   group="gags"
+   keep_evaluating="y"
+   match="Your might is not great enough to challenge *"
+   name="pentacle_gag"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="*The sky is dark, night covers Avalon. *"
+   name="nighttime_gag"
+   omit_from_output="y"
+   send_to="14"
+   sequence="200"
+  >
+  <send>Note "%2"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="Light shines from a magestaff you hold.*"
+   name="magestaff_light_gag"
+   omit_from_output="y"
+   send_to="14"
+   sequence="200"
+  >
+  <send>Note "%1"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="Pools of light shine out, here and there, like luminous shadows. *"
+   name="shadows_gag"
+   omit_from_output="y"
+   send_to="14"
+   sequence="200"
+  >
+  <send>Note( "%1" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="gags"
+   match="You are able to see through your mind's eye. *"
+   omit_from_output="y"
+   send_to="14"
+   sequence="200"
+  >
+  <send>Note "%1"</send>
+  </trigger>
+
+
+
+  <trigger
+   group="gauntlet"
+   match="(Dwarves|Monks) left\]$"
+   omit_from_output="y"
+   regexp="y"
+   sequence="100"
+  >
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="herblist"
+   ignore_case="y"
+   keep_evaluating="y"
+   match="^&quot;([A-z]+)(\d+)&quot;\:.*x(\d+)\s+.*\.\s+(prepared|unprepared)$"
+   name="herblist_herb_replacement"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "%3 %1, %4")
+if inpouch == 1 then
+Send( "inp %3 %1" )
+end</send>
+  </trigger>
+  <trigger
+   group="herblist"
+   ignore_case="y"
+   match="^&quot;(alethe|athillias|denallo|kelventari|sata|witan)(\d+)&quot;\:.*x(\d+)\s+.*\.\s+Prepared$"
+   name="herblist_item"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>                        ctr = "%1"
+temp_herblist[ctr] = tonumber( %3 )</send>
+  </trigger>
+  <trigger
+   group="herblist"
+   match="You hold, in your hands, *"
+   name="herblist_end"
+   send_to="12"
+   sequence="100"
+  >
+  <send>if check_herblist then
+ DeleteTimer( check_herblist )
+end
+
+-- transfer our new herblist over the old one --
+for k, v in pairs( temp_herblist ) do
+ todo.outp[k].have = v
+end
+
+-- disable herblist triggers --
+EnableGroup( "herblist", 0)</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="immortals"
+   match="^(Soft|Hard)-Equilibrium (.*)$"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/eq.wav")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="immortals"
+   match="^You have regained your (left|right)-sided balance (.*)$"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/bal.wav")
+Note "bal"</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="interrupts"
+   keep_evaluating="y"
+   match="*blocks you from moving *"
+   name="blocked_interrupt"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>inote( "blocked %2" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="interrupts"
+   keep_evaluating="y"
+   match="Fife-music vibrations enshroud you in an aura of deadening, your movement slowing rapidly to mere walking pace*"
+   name="fifewalk"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>inote( "fifewalk" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="interrupts"
+   keep_evaluating="y"
+   match="The soil-and-stone careers into your pentacle, obfuscating it entirely but entirely deprived of power by your defensive magic."
+   name="pent_down_earthbolt"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>inote( "pent down" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="interrupts"
+   keep_evaluating="y"
+   match="You are blown by a mighty gust of wind to the *."
+   name="trombone_interrupt"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>inote( "moved %1" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="interrupts"
+   keep_evaluating="y"
+   match="You are inexorably drawn towards a nearby but unseen force of irresistible gravity."
+   name="gravity_interrupt"
+   send_to="14"
+   sequence="100"
+  >
+  <send>inote( "grav" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="interrupts"
+   keep_evaluating="y"
+   match="You are summoned by *"
+   name="summon_interrupt"
+   send_to="14"
+   sequence="100"
+  >
+  <send>inote( "summoned, %1" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="interrupts"
+   keep_evaluating="y"
+   match="You must slay the slime demon before you can attack anything else."
+   name="slime_interrupt"
+   send_to="14"
+   sequence="100"
+  >
+  <send>inote( "slime" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="interrupts"
+   keep_evaluating="y"
+   match="Your movements become sluggish*"
+   name="sloth_interrupt"
+   send_to="14"
+   sequence="100"
+  >
+  <send>inote( "sloth" )</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="items"
+   keep_evaluating="y"
+   match="You let * fall to the ground."
+   name="dropped_item"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Dropped %1"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="items"
+   match="You pick up *"
+   name="get_item"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/get item.ogg")
+Note( "Got %1" )</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="locating"
+   keep_evaluating="y"
+   match="^An image of (.*) appears\; the location \&quot;(.*)\&quot; forming a fleeting backdrop to the vision.$"
+   name="location_sub"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "%1 at %2" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="locating"
+   match="You examine the clues, sniff the air and question your intuition; you see an echo of *"
+   name="truediscern_sub"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "%1" )</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="malloran"
+   match="^(.+) beckons a globe made of whirling malloran vapour. It forms a golden aura in (his|her) entourage.$"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>if string.find("%1", target) then
+Sound(GetInfo(67).."/sounds/malloran_up.wav")
+end
+Note( "Mal up %1")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="malloran"
+   match="^The golden aura encircling (.+) flickers bright then fades into nothing.$"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>if string.find("%1", target) then
+Sound(GetInfo(67).."/sounds/malloran_down.wav")
+end
+Note( "Mal down %1" )</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="mindbleed"
+   keep_evaluating="y"
+   match="^(.*) looks bemused as the \&quot;([A-z]+)\&quot; defence bleeds unexpectedly out of (his|her) mind.$"
+   name="mindbleed_first"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "%1 Bled %2" )</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="mist"
+   match="*shuffles about in the mist."
+   name="shuffling_about"
+   omit_from_log="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "%1 mist" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="mist"
+   match="The mists swirl about you ambiguously."
+   name="mist_swirl_sub"
+   omit_from_log="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "Mist" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="mist"
+   match="You lurch forward in the constricted air."
+   name="lurch_sub"
+   omit_from_log="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "Lurch" )</send>
+  </trigger>
+
+
+
+  <trigger
+   group="music"
+   lines_to_match="3"
+   match="^Echoes of taborstick-music fill the air, resonating to a wonderfully clear code - the moment of enchantment - then receding in a soft but rapid fashion.$"
+   multi_line="y"
+   name="echo_sub"
+   omit_from_log="y"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "%1 echo" )</send>
+  </trigger>
+
+
+  <trigger
+   enabled="y"
+   group="usic"
+   match="Echoes of fife-music fill the air, resonating to a wonderfully clear code - the moment of enchantment - then receding in a soft but rapid fashion."
+   name="fife_echo"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "Fife echo" )</send>
+  </trigger>
+
+
+  <trigger
+   enabled="y"
+   group="music"
+   keep_evaluating="y"
+   match="^([A-z]+) cannot hear your music.$"
+   name="deaf"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/deaf.ogg")
+Note( "Deaf" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="music"
+   keep_evaluating="y"
+   match="^The deadening fife-music envelops ([A-z]+), slowing (him|her) to normal movement pace. (His|Her) stealthy speed manages to dodge any further sluggishness effects.$"
+   name="sloth_slowed"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/sloth_def_down.ogg")
+Note( "Slowed" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="music"
+   keep_evaluating="y"
+   match="^The heavy vibrations of the fife envelop ([A-z]+), deadening (his|her) senses. (His|Her) breathing becomes laboured and shallow and (his|her) movements lurch with heavy sluggishness.$"
+   name="fifed"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/sloth.ogg")
+Note( "Fifed" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="music"
+   keep_evaluating="y"
+   match="The banging of the tabor shatters the deafness which afflicted *"
+   name="taborstick_sub"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/taborstick.ogg")
+Note( "Undeaf %1" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="music"
+   match="The highpoint of the echoing fife-music envelops * in a deadening aura. *"
+   name="echo_fifed"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/sloth.ogg")
+Note( "Fifed %1" )</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="mysticism"
+   match="* bonds a strange wax figurine against you."
+   name="bonded"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Bonded %1"</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="picking"
+   match="^There are (.*) batches of ([A-z]+) here.$"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>bc_herbcount = convert_words_to_numbers("%1")
+herbcount = bc.tonumber(bc_herbcount)
+herb = "%2"
+Note (herbcount .. " " .. (herb))</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="pipes"
+   match="^\s+pipe(\d+)\s+A wooden pipe\s+No herb\.$"
+   name="pipelist_empty"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "Empty pipe%1")</send>
+  </trigger>
+
+
+  <trigger
+   enabled="y"
+   group="pipes"
+   match="^\s+pipe(\d+)\s+A wooden pipe\s+(\w+) \((\d+) maximum puffs\)$"
+   name="pipelist_body"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="10"
+  >
+  <send>Note( "Pipe%1 has %3 puffs of %2")</send>
+  </trigger>
+
+
+  <trigger
+   group="pipes"
+   match="You take a puff of the pipe, but find it is empty of leaf."
+   name="pipe_empty1"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Fill"</send>
+  </trigger>
+
+
+  <trigger
+   group="pipes"
+   match="The pipe is not lit."
+   name="unlit_pipe"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Light"</send>
+  </trigger>
+
+
+  <trigger
+   group="pipes"
+   match="The pipe is empty; what did you expect to light?"
+   name="empty_pipe"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Fill"</send>
+  </trigger>
+
+
+  <trigger
+   enabled="y"
+   group="pipes"
+   match="Due to lack of expertise, your pipe has gone out."
+   name="pipe_out"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Pipe out"</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="poisons"
+   match="^Your (left|right) leg buckles beneath you - it has been weakened and can no longer take your weight.$"
+   name="quirrog"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Broke %1 leg"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="poisons"
+   match="^Your (left|right) wrist swells up suddenly, and then deflates rapidly. The painful experience disables your (left|right) arm.$"
+   name="resik"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "Broke %1 arm" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="poisons"
+   match="A diabolical curse to the Gods rings in your ears."
+   name="blackroot"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Blackroot"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="poisons"
+   match="A distant, but malevolent singing rings in your ears."
+   name="exaar"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Dl"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="poisons"
+   match="A luminous stickiness strikes you, covering your skin horribly."
+   name="kural"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "kural"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="poisons"
+   match="The skies turn grey and unwelcoming."
+   name="blackroot2"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Vertigo"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="poisons"
+   match="The tender-hearted hands of sleep brush against your weary eyelids."
+   name="mandrake"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Asleep"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="poisons"
+   match="The thought of food and drink revolts you suddenly."
+   name="grimleaf"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Anex"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="poisons"
+   match="The world about you seems to darken somewhat."
+   name="jegga"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Jegga"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="poisons"
+   match="There is a stabbing pain in your chest and you fall to the floor gasping in pain."
+   name="kly"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Kly"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="poisons"
+   match="Why, you suddenly ask, does the world act so unfairly towards you!"
+   name="nann"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Nann"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="poisons"
+   match="You feel malcoordinated all of a sudden; all fingers and thumbs."
+   name="gilf"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "gilf"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="poisons"
+   match="You hear a distant popping sound."
+   name="athanzar"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Athanzar"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="poisons"
+   match="Your hyper-adrenalin settles down to normal."
+   name="mandrake_takes_adrenalin"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Mandrake"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="poisons"
+   match="Your stomach is struck by violent cramps."
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "Puke" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="poisons"
+   match="Your tongue begins to itch slightly. You rub it against your teeth only to discover, to your horror, that it has painlessly rotted away."
+   name="yake"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Yake"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="poisons"
+   match="Your vocal chords are swollen and cannot utter a sound."
+   name="ikirax"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "ikirax"</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   expand_variables="y"
+   group="prompt"
+   keep_evaluating="y"
+   match="^(\d+)h, (\d+)m (\w+)"
+   name="format_prompt"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>-- set current stats based on prompt --
+status.last_health = status.current_health
+status.current_health = tonumber( %1 )
+status.delta_health = status.current_health - status.last_health
+status.last_mana = status.current_mana
+status.current_mana = tonumber( %2 )
+status.delta_mana = status.current_mana - status.last_mana
+status.prompt_status = "%3"
+status.health_percent = 100 * ( status.current_health / status.max_health )
+status.health_percent = status.health_percent - status.health_percent % 1
+status.mana_percent = 100 * ( status.current_mana / status.max_mana )
+status.mana_percent = status.mana_percent - status.mana_percent % 1
+
+-- delete ugly prompt --
+InfoClear()
+
+
+-- indicate pause --
+if sys_pause == 1 then
+ Note "(P)"
+end
+
+-- Display the new, slick prompt --
+Info ("%1h %2m %3")
+</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="prompt"
+   match="^Health: (\d+)/(\d+)   Mana: (\d+)/(\d+)       Lessons: (\d+)    Bleed: (\d+)$"
+   name="max_health_and_mana"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>status.max_health = tonumber( %2 )
+status.max_mana = tonumber( %4 )</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="rituals"
+   match="Hellish flames erupt from unseen holes enveloping you and your surroundings."
+   name="hellflames"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Hellflames"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="rituals"
+   match="The skies above you darken as ominous dark clouds gather."
+   name="hailstorm"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "hail"</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="roots"
+   ignore_case="y"
+   match="^(.*) excites your rootsense as he|she is stricken by ritual-magic.$"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>if string.find("%1", target) then
+ Sound(GetInfo(67).."/sounds/tick5.ogg")
+ Note( "Tick!" )
+else
+ Sound(GetInfo(67).."/sounds/tick.ogg")
+ Note "Tick %1."
+end</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="roots"
+   match="reaches into a whirling earth elemental infused by elemental roots, powering (himself|herself) to strike.$"
+   name="earthbolt_prep_gag"
+   omit_from_output="y"
+   regexp="y"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="roots"
+   match="The whirling earth elemental disperses harmlessly, its power spent."
+   name="earthbolt_spent_gag"
+   omit_from_log="y"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="runes"
+   match="^A crackling burst of light breaks through your blindness to strike your blackened retina. The flash revitalises your eyes and sight is soon restored.$"
+   name="flame_rune"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/unblind.ogg")
+
+Note( "Flame" )
+Sound(GetInfo(67).."/sounds/unignore.wav")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="runes"
+   match="^You see a ([A-Za-z]+)-shaped rune out of the corner of your eye.$"
+   name="rune_spotted"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "%1"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="runes"
+   match="There is a flash of silver beneath your steed which rears into the air, throwing you heavily to the ground. You lie on the ground stunned and helpless."
+   name="snake_rune"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/snake_rune.ogg")
+Note( "Snake" )</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="scathes"
+   match="(.*?) steps out from beneath (his|her) aura."
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Aura"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="scathes"
+   match="* floats gently to the ground.' "
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Fall"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="scathes"
+   match="* is no longer invisible."
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Vis"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="scathes"
+   match="* returns to walking pace."
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Speed"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="scathes"
+   match="* tense muscles are relaxed by your hypnotic movements."
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Strength"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="scathes"
+   match="^You have relaxed (.*?) into losing the sixth sense\.$"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Sense"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="scathes"
+   keep_evaluating="y"
+   match="^You strip .* of fire resistance.$"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Fire"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="scathes"
+   match="You deprive * of blackheart markings."
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Blackheart"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="scathes"
+   match="You relax * extra-ordinary magical resistance."
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Ignorance"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="scathes"
+   match="You relax * from fear to calm."
+   name="calm_scathe"
+   omit_from_output="y"
+   send_to="2"
+   sequence="100"
+  >
+  <send>Note "Calm"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="scathes"
+   match="You wave away the shield of deflection which surrounds (.*)."
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Shield"</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="sounds"
+   ignore_case="y"
+   match="* has been slain by Agarwain*"
+   send_to="12"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/kill.wav")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="sounds"
+   keep_evaluating="y"
+   match="*god of * tells you*"
+   name="god_tell"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/godTell.ogg")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="sounds"
+   match="^(.+) has just left you a message.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/newmsg.ogg")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="sounds"
+   match="^.*is now swinging (his|her) blade at high speed about (his|her) head, bearing down upon you.$"
+   name="second_cleave"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/cleave.wav")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="sounds"
+   match="^.*spins (his|her) blade about (his|her) head and moves towards you menacingly.$"
+   name="first_cleave"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/cleave.wav")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="sounds"
+   match="^A shadowy silhouette of (.*) appears"
+   omit_from_output="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/trav.wav")
+Note "Trav %1"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="sounds"
+   match="^Your augmented fireball would require"
+   name="fireball_failed"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/error.wav")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="sounds"
+   keep_evaluating="y"
+   match="^Your rune-bug picks up words.*(tells|answers) you"
+   name="tell_sound"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/tell.wav")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="sounds"
+   match="begins to mix up a.*potion.$"
+   name="mixing_potion_sound"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/mix.ogg")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="sounds"
+   match="Death is no enemy of yours, for you have subjugated even his minions by your awesome power."
+   name="power_slain"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/power.wav")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="sounds"
+   keep_evaluating="y"
+   match="has started to follow you.$"
+   name="someone_started_following"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/start following.ogg")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="sounds"
+   keep_evaluating="y"
+   match="is impervious to your attack due to divine splendour.$"
+   name="spit_fail_sound"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/command wrong.ogg")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="sounds"
+   match="The healing liquid sends a tingle down your spine."
+   name="sip_health_sound"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/healthSip.ogg")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="sounds"
+   match="You bare your bottom derisively to the world."
+   name="moon"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/moon.wav")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="sounds"
+   match="You cover up your behind - figuring your mooning has served its purpose."
+   name="unmoon"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/unmoon.wav")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="sounds"
+   match="You have regained magical equilibrium."
+   name="magical_equilibrium_sound"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/eq.wav")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="sounds"
+   match="You pour the potion of mind control down your throat."
+   name="health_sound"
+   omit_from_output="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/mana.ogg")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="sounds"
+   ignore_case="y"
+   keep_evaluating="y"
+   match="You spit * at *"
+   name="spit_sound"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/spit.ogg")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="sounds"
+   match="Your eyes grow luminous as good-luck courses through your veins."
+   name="luck_sound"
+   omit_from_output="y"
+   send_to="12"
+   sequence="100"
+   sound="c:\users\andrew\mushclient-portable\sounds\enlighten.wav"
+  >
+  <send>Sound(GetInfo(67).."/sounds/luck.wav")
+Note( "Luck!" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="sounds"
+   match="Your recent olvar consumption re-knits your wounded sinews and fends away the approaching Death..."
+   name="olvar_sound"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/slain.wav")</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="strikes"
+   match="lurches at you and stabs you in the back.$"
+   name="stabbed"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/stabbed.ogg")</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="subs"
+   match="^###(.+)$"
+   omit_from_output="y"
+   regexp="y"
+   send_to="2"
+   sequence="100"
+  >
+  <send>%1</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="subs"
+   ignore_case="y"
+   keep_evaluating="y"
+   match="^(.*) calls (to|his|her) (.*)\: (.*)"
+   omit_from_log="y"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+   sound="c:\users\andrew\mushclient-portable\sounds\call.wav"
+  >
+  <send>Note ("%1 to %3: %4")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   expand_variables="y"
+   group="subs"
+   ignore_case="y"
+   keep_evaluating="y"
+   match="^(he|she) is stricken by the (.*)$"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "%2" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="subs"
+   match="^You are so weak-wristed that you cannot hold (.*). It falls to the ground.$"
+   name="drop_wielded"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/dropsword.ogg")
+Note( "Dropped %1" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="subs"
+   keep_evaluating="y"
+   match="^Your rune-bug picks up words: (.*)$"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "%1"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="subs"
+   match="Your movements become sluggish - as if in slow-motion - as vibrations from the heavy fife-music envelop you. Your very breathing grows shallow and laboured under the suffocating effects."
+   name="given_sloth_sub"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Sloth"</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="survival"
+   match="You clench your fists and roar arrogantly."
+   name="fists_shorthand"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Fists"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="survival"
+   match="You crack your (left|right) hand into place."
+   name="fists_cured_arm"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "%1"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="survival"
+   match="You inhale deeply and hold your breath."
+   name="holdbreath"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Hb"</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="symptoms"
+   match="Clouds fill your mind as you fall into a deep slumber."
+   name="rune_sleeped"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/sleeped.ogg")
+Note( "Sleep!" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="symptoms"
+   match="You are asleep and incapable of acting; type WAKE to wake yourself up."
+   name="asleep_trig"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/asleep.ogg")
+Note( "Sleep" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="symptoms"
+   match="You bend your head forward and chunder."
+   name="vomiting3"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Puke"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="symptoms"
+   match="You cannot even countenance going up. It is a fearful concept."
+   name="have_vertigo"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Vertigo"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="symptoms"
+   match="You cannot smoke anything; your windpipe is painful and contracted."
+   name="windpiped"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Asthma"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="symptoms"
+   match="You cough and wheeze into your pipe, unable to inhale."
+   name="have_asthma"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Asthma"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="symptoms"
+   match="You could not face drinking anything. Liquids revolt you."
+   name="anorexia_drink"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Anex"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="symptoms"
+   match="You could not face eating anything. Food revolts you."
+   name="anorexia_eat"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Anex"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="symptoms"
+   match="You despair of your predicament."
+   name="have_nann"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "nann"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="symptoms"
+   match="You fall into a deep slumber."
+   name="potion_sleeped"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/sleeped.ogg")
+Note( "Sleep!" )</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="symptoms"
+   match="You lurch into action."
+   name="sloth_symptom"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Sloth"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="symptoms"
+   match="You spit out the (.*?); why bother healing?"
+   name="pessimism2"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Pess"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="symptoms"
+   match="You spit out the potion; what is the point of healing?"
+   name="pessimism1"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Pess"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="symptoms"
+   match="You spot a way to go down and flee."
+   name="vertigo_symptom"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Vertigo"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="symptoms"
+   match="You vomit all over the place."
+   name="vomiting1"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note "Puke"</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="symptoms"
+   match="Your face goes green and you spew all over the place."
+   name="vomiting2"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "Puke" )</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="thievery"
+   match="A pair of ropes fly in and wrap around your throat; you are pulled * against your will."
+   name="yanked"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Sound(GetInfo(67).."/sounds/yank.wav")
+inote( "yanked %1" )</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="touching"
+   match="^(.*) has a health of (\d+) / (\d+).$"
+   name="touch_enemy"
+   omit_from_output="y"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>enemyHealth = tonumber("%2")
+enemyMax = tonumber("%3")
+Note "%2 / %3"
+if (enemyHealth / enemyMax * 100) &lt; 25 then
+ Sound(GetInfo(67).."/sounds/crithit.wav")
+end --if</send>
+  </trigger>
+
+
+
+  <trigger
+   enabled="y"
+   group="tracking"
+   match="You twitch your nostrils and pick up the scent leading *."
+   name="scent_replacement"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>Note( "%1" )</send>
+  </trigger>
+
+
+
+
+
+
+
+</triggers>
+
+
+
+
+
+</muclient>

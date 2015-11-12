@@ -1,0 +1,36 @@
+0.4
+- Added tons of triggers I have been lax about including in the plugin.
+- Plugin now hosted on Github; changes will from henceforth be tracked far more closely.
+
+0.33
+	- Added sound for trueyank. Will add regular yanking if it ever happens to me, ha.
+	- Added a sound for recovering allheal balance.
+
+0.32
+	- Fixed a typo that prevented the plugin from loading. How silly.
+	- Added windpipe affliction and cure subs and sounds.
+- Added sounds for quarreling demons.
+	- Added sounds for getting stabbed.
+	- Work on sorting triggers into their proper categories.
+
+
+0.31
+	- Added basic targeting: t <person> to target, en <person> to target and add to enemies list. Required for malloran sounds.
+	- Added agarwain@meetplace.net as primary support/feature request email.
+
+
+0.3
+	- Added malloran up and down sounds and substitutions. Malloran notification can be toggled with aliases malon and maloff. Default is off, so perhaps add malon to your startup sequence if you are a physical professional who cares about these things. For now a sound will only play for your target.
+	- Added gags for earthbolt as well as an audible "tick" for Mages using rootsense, one for target and one for everyone else.
+	- Included the required channel_history and MCBase plugins as well as some other useful utilities I use often. Modified the MCBase Readme to be useful.
+- Updated ReadMe
+
+0.2
+	- Added sounds for getting, dropping and wielding items.
+	- Added sounds/subs for candescence unblind, ignorance and dazzle.
+	- Added sounds for restrike, missing swings and hitting malloran.
+	- Added subs for vorpal blade.
+	- Added rudimentary immortal combat settings (just balance/eq regain for now.)
+
+0.1
+	- Initial release.
