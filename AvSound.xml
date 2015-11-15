@@ -552,7 +552,8 @@ Execute("history_add team=%1: %2")</send>
    send_to="14"
    sequence="100"
   >
-  <send>Execute("history_add military=%2: %3")</send>
+  <send>Sound(GetInfo(67).."/sounds/ccm.ogg")
+Execute("history_add military=%2: %3")</send>
   </trigger>
   <trigger
    enabled="y"
