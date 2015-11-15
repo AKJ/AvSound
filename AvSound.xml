@@ -42,7 +42,8 @@ SetOption("convert_ga_to_newline", 1)
 SetOption("ctrl_p_goes_to_previous_command", 1)
 SetOption("tab_completion_lines", 1000)
 
-
+-- Define variables
+player.name = GetInfo(3)
 
 function firstToUpper(str)
     return (str:gsub("^%l", string.upper))
@@ -361,14 +362,16 @@ Note( "Cold stripped" )</send>
   <trigger
    enabled="y"
    group="candescence"
-   match="As the blow slips harmlessly through the form of Agarwain, the phantasm disperses with a wink."
+   match="As the blow slips harmlessly through the form of * the phantasm disperses with a wink."
    name="phantasm_sub"
    omit_from_output="y"
    send_to="14"
    sequence="100"
   >
-  <send>Sound(GetInfo(67).."/sounds/phantasm.ogg")
-Note( "Phantasm!" )</send>
+  <send>if string.find("%1", player.name) then
+Sound(GetInfo(67).."/sounds/phantasm.ogg")
+Note( "Phantasm!" )
+end</send>
   </trigger>
   <trigger
    enabled="y"
@@ -2543,12 +2546,15 @@ Note( "Snake" )</send>
   <trigger
    enabled="y"
    group="sounds"
+   regexp="y"
    ignore_case="y"
-   match="* has been slain by Agarwain*"
+   match="has been slain by (.*)$"
    send_to="12"
    sequence="100"
   >
-  <send>Sound(GetInfo(67).."/sounds/kill.wav")</send>
+  <send>if string.find("%1", player.name) then
+Sound(GetInfo(67).."/sounds/kill.wav")
+end</send>
   </trigger>
   <trigger
    enabled="y"
