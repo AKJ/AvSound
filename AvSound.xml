@@ -1502,37 +1502,6 @@ inote( "Pushed %1" )</send>
   >
   </trigger>
   <trigger
-   group="gags"
-   keep_evaluating="y"
-   match="Your might is not great enough to challenge *"
-   name="pentacle_gag"
-   omit_from_output="y"
-   sequence="100"
-  >
-  </trigger>
-  <trigger
-   enabled="y"
-   group="gags"
-   match="*The sky is dark, night covers Avalon. *"
-   name="nighttime_gag"
-   omit_from_output="y"
-   send_to="14"
-   sequence="200"
-  >
-  <send>Note "%2"</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="gags"
-   match="Light shines from a magestaff you hold.*"
-   name="magestaff_light_gag"
-   omit_from_output="y"
-   send_to="14"
-   sequence="200"
-  >
-  <send>Note "%1"</send>
-  </trigger>
-  <trigger
    enabled="y"
    group="gags"
    match="Pools of light shine out, here and there, like luminous shadows. *"
