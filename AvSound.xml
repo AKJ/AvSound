@@ -14,7 +14,7 @@
    purpose="Sounds and substitutions for Avalon; The Legend Lives"
    date_written="2015-05-24 08:07:30"
    requires="4.50"
-   version="0.32"
+   version="0.41"
    >
 <description trim="y">
 <![CDATA[
@@ -96,6 +96,23 @@ Note( "Malloran sounds disabled." )</send>
   >
   <send>EnableTriggerGroup("malloran", 1)
 Note( "Malloran sounds enabled." )</send>
+  </alias>
+  <alias
+   name="omit_sound_from_tells"
+   match="^tells$"
+   enabled="y"
+   group="communication"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>EnableTrigger("tell_sound", 0)
+EnableTrigger("god_tell", 0)
+Send( "tells" )
+DoAfterSpecial(1, [[
+ EnableTrigger("god_tell", 1)
+ EnableTrigger("tell_sound", 1)
+]], sendto.script)</send>
   </alias>
 
 
@@ -2534,7 +2551,17 @@ Note( "Snake" )</send>
   </trigger>
 
 
-
+  <trigger
+   enabled="y"
+   group="sounds"
+   match="(god|goddess|all-consuming).*tells you"
+   name="god_tell"
+   regexp="y"
+   send_to="14"
+   sequence="10"
+  >
+  <send>Sound(GetInfo(67).."/sounds/godTell.ogg")</send>
+  </trigger>
   <trigger
    enabled="y"
    group="sounds"
@@ -2544,17 +2571,6 @@ Note( "Snake" )</send>
    sequence="100"
   >
   <send>Sound(GetInfo(67).."/sounds/kill.wav")</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="sounds"
-   keep_evaluating="y"
-   match="*god of * tells you*"
-   name="god_tell"
-   send_to="14"
-   sequence="100"
-  >
-  <send>Sound(GetInfo(67).."/sounds/godTell.ogg")</send>
   </trigger>
   <trigger
    enabled="y"
@@ -2611,17 +2627,20 @@ Note "Trav %1"</send>
   >
   <send>Sound(GetInfo(67).."/sounds/error.wav")</send>
   </trigger>
+<triggers>
   <trigger
    enabled="y"
    group="sounds"
    keep_evaluating="y"
-   match="^Your rune-bug picks up words.*(tells|answers) you"
+   match="tells you, (.*)$"
    name="tell_sound"
    regexp="y"
    send_to="14"
    sequence="100"
   >
-  <send>Sound(GetInfo(67).."/sounds/tell.wav")</send>
+  <send>Sound(GetInfo(67).."/sounds/tell.wav")
+EnableTrigger("tell_sound", 0)
+DoAfterSpecial(1, [[ EnableTrigger("tell_sound", 1)]], sendto.script)</send>
   </trigger>
   <trigger
    enabled="y"
