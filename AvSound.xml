@@ -36,6 +36,14 @@ This is a work in progress and by no means complete or comrehensive. It should a
 
 <script>
 <![CDATA[
+-- Useful options.
+SetOption("arrows_change_history", 1)
+SetOption("convert_ga_to_newline", 1)
+SetOption("ctrl_p_goes_to_previous_command", 1)
+SetOption("tab_completion_lines", 1000)
+
+
+
 function firstToUpper(str)
     return (str:gsub("^%l", string.upper))
 end
