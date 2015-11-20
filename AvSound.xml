@@ -935,12 +935,11 @@ Note( "quarreled %1" )</send>
   </trigger>
 
 
-
   <trigger
    enabled="y"
    group="exits"
    keep_evaluating="y"
-   match="\sYou notice a single exit, (.*)\.$"
+   match="You notice a single exit (.*)\.$"
    name="format_single_exit"
    omit_from_log="y"
    omit_from_output="y"
@@ -948,20 +947,7 @@ Note( "quarreled %1" )</send>
    send_to="14"
    sequence="100"
   >
-  <send>DOAfterNote(0.2, "%1" )</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="exits"
-   keep_evaluating="y"
-   match="You notice a single exit, (.*)\.$"
-   name="format_single_exit_no_space"
-   omit_from_output="y"
-   regexp="y"
-   send_to="14"
-   sequence="100"
-  >
-  <send>DoAfterNote(0.2, "%1" )</send>
+  <send>Note("%1")</send>
   </trigger>
   <trigger
    enabled="y"
